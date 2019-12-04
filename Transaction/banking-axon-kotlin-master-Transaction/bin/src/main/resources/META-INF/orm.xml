@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_0.xsd"
+				 version="1.0">
+	<mapped-superclass access="FIELD" metadata-complete="false" class="org.axonframework.eventhandling.AbstractSequencedDomainEventEntry">
+        <attributes>
+            <id name="globalIndex">
+                <generated-value strategy="SEQUENCE" generator="myGenerator"/>
+                <sequence-generator name="myGenerator" sequence-name="mySequence"/>
+            </id>
+        </attributes>
+    </mapped-superclass>
+	<mapped-superclass class="org.axonframework.eventsourcing.eventstore.AbstractSnapshotEventEntry" access="FIELD">
+        <attributes>
+            <id name="aggregateIdentifier">
+                <column name="aggregate_identifier" length="36"/>
+            </id>
+            <basic name="type">
+                <column name="type" length="210"/>
+            </basic>
+        </attributes>
+    </mapped-superclass>
+	<mapped-superclass class="org.axonframework.modelling.saga.repository.jpa.AbstractSagaEntry" access="FIELD">
+        <attributes>
+            <id name="sagaId">
+                <column name="saga_id" length="36"/>
+            </id>
+            <basic name="revision">
+                <column name="revision" length="250"/>
+            </basic>
+        </attributes>
+    </mapped-superclass>
+    <mapped-superclass class="org.axonframework.eventhandling.AbstractDomainEventEntry" access="FIELD">
+		<attributes>
+            <basic name="type">
+                <column name="type" length="75"/>
+            </basic>
+            <basic name="aggregateIdentifier">
+                <column name="aggregate_identifier" length="36"/>
+            </basic>
+            <basic name="sequenceNumber">
+                <column name="sequence_number"/>
+            </basic>
+        </attributes>
+    </mapped-superclass>
+    <mapped-superclass class="org.axonframework.eventhandling.AbstractEventEntry" access="FIELD">
+		<attributes>
+            <basic name="eventIdentifier">
+                <column name="event_identifier" length="36"/>
+            </basic>
+        </attributes>
+    </mapped-superclass>
+	<entity class="org.axonframework.eventsourcing.eventstore.jpa.SnapshotEventEntry" access="FIELD">
+		<table name="snapshot_event_entry" />
+	</entity>
+	<entity class="org.axonframework.modelling.saga.repository.jpa.AssociationValueEntry" access="FIELD">
+		<table name="association_value_entry" />
+		<attributes>
+			<id name="id">
+	        	<generated-value strategy="IDENTITY"/>
+	        </id>
+	        <basic name="sagaId">
+                <column name="saga_id" length="36"/>
+            </basic>
+	        <basic name="associationKey">
+                <column name="association_key" length="36"/>
+            </basic>
+            <basic name="sagaType">
+                <column name="saga_type" length="100"/>
+            </basic>
+        </attributes>
+	</entity>
+	<entity class="org.axonframework.modelling.saga.repository.jpa.SagaEntry" access="FIELD">
+		<table name="saga_entry" />
+	</entity>
+	<entity class="org.axonframework.eventhandling.tokenstore.jpa.TokenEntry" access="FIELD">
+		<table name="token_entry" />
+		<id-class class="org.axonframework.eventhandling.tokenstore.jpa.TokenEntry$PK"/>
+		<attributes>
+			<id name="processorName">
+	        	<column name="processor_name" length="245"/>
+	        </id>
+	        <id name="segment">
+	        	<column name="segment"/>
+	        </id>
+        </attributes>
+	</entity>
+	<entity class="org.axonframework.eventsourcing.eventstore.jpa.DomainEventEntry" access="FIELD">
+		<table name="domain_event_entry"/>
+		<unique-constraint>
+        	<column-name>aggregate_identifier</column-name>
+            <column-name>sequence_number</column-name>
+        </unique-constraint>
+	</entity>
+</entity-mappings>
